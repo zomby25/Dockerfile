@@ -18,6 +18,7 @@ RUN useradd -m -s /bin/bash rdpuser \
     && chown -R rdpuser:rdpuser /home/rdpuser
 
 COPY start.sh /start.sh
+
 RUN chmod +x /start.sh
 
 EXPOSE 8080
