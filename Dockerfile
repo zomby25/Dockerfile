@@ -11,15 +11,16 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Création de l'utilisateur RDP
 RUN useradd -m -s /bin/bash rdpuser \
     && echo 'rdpuser:ChangeMoi123!' | chpasswd \
-    && adduser rdpuser sudo
+    && usermod -aG sudo rdpuser
 
+# XFCE comme bureau
 RUN echo "startxfce4" > /home/rdpuser/.xsession \
     && chown rdpuser:rdpuser /home/rdpuser/.xsession
 
-RUN sed -i 's/^port=3389/port=8080/' /etc/xrdp/xrdp.ini
-
-EXPOSE 8080
+# XRDP écoute sur 3389
+EXPOSE 3389
 
 CMD service dbus start && service xrdp start && tail -f /dev/null
