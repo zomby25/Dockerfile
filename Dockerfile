@@ -5,22 +5,21 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     xfce4 \
     xfce4-terminal \
-    xrdp \
+    tigervnc-standalone-server \
+    novnc \
+    websockify \
     dbus-x11 \
-    sudo \
+    xterm \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Création de l'utilisateur RDP
 RUN useradd -m -s /bin/bash rdpuser \
-    && echo 'rdpuser:ChangeMoi123!' | chpasswd \
-    && usermod -aG sudo rdpuser
+    && mkdir -p /home/rdpuser/.vnc \
+    && chown -R rdpuser:rdpuser /home/rdpuser
 
-# XFCE comme bureau
-RUN echo "startxfce4" > /home/rdpuser/.xsession \
-    && chown rdpuser:rdpuser /home/rdpuser/.xsession
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 
-# XRDP écoute sur 3389
-EXPOSE 3389
+EXPOSE 8080
 
-CMD service dbus start && service xrdp start && tail -f /dev/null
+CMD ["/start.sh"]
