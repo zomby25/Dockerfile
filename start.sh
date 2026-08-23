@@ -2,7 +2,6 @@
 
 set -e
 
-export USER=rdpuser
 export HOME=/home/rdpuser
 
 mkdir -p "$HOME/.vnc"
@@ -19,16 +18,23 @@ startxfce4 &
 EOF
 
 chmod +x "$HOME/.vnc/xstartup"
-chown -R rdpuser:rdpuser "$HOME/.vnc"
 
 # Mot de passe VNC
 echo "ChangeMoi123!" | vncpasswd -f > "$HOME/.vnc/passwd"
-chmod 600 "$HOME/.vnc/passwd"
-chown rdpuser:rdpuser "$HOME/.vnc/passwd"
 
-# Démarrage du serveur VNC
+chmod 600 "$HOME/.vnc/passwd"
+chown -R rdpuser:rdpuser "$HOME/.vnc"
+
+# Démarrer VNC
 su - rdpuser -c "vncserver :1 -geometry 1280x720 -depth 24"
 
-# VNC : 5901
-# noVNC : 8080
-websockify --web=/usr/share/novnc/ 0.0.0.0:8080 localhost:5901
+# Railway fournit automatiquement PORT
+PORT="${PORT:-8080}"
+
+echo "Starting noVNC on port $PORT"
+
+# noVNC/WebSocket
+websockify \
+  --web=/usr/share/novnc/ \
+  "0.0.0.0:$PORT" \
+  "127.0.0.1:5901"
