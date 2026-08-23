@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
     xfce4-terminal \
 	firefox-esr \
     tigervnc-standalone-server \
+	python3 \
+    python3-pip \
+    python3-venv \
     novnc \
     websockify \
     dbus-x11 \
